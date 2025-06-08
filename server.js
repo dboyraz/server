@@ -82,8 +82,7 @@ setInterval(async () => {
 
 app.use(cors({
   origin: [
-    process.env.FRONTEND_URL || "https://web-app-psi-nine.vercel.app/",
-    "https://server-production-84d1.up.railway.app/"
+    process.env.FRONTEND_URL || "https://web-app-psi-nine.vercel.app/"
   ],
   credentials: true
 })); 
