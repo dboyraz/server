@@ -82,10 +82,8 @@ setInterval(async () => {
 
 app.use(cors({
   origin: [
-    process.env.FRONTEND_URL || "https://web-app-iota-eosin.vercel.app",
-    "https://web-app-iota-eosin.vercel.app", // Your Vercel frontend
-    "https://web-app-git-master-d-bs-projects-3d6c7011.vercel.app/",
-    "https://web-nhwyw22tx-d-bs-projects-3d6c7011.vercel.app/"
+    process.env.FRONTEND_URL || "https://web-app-psi-nine.vercel.app/",
+    "https://server-production-84d1.up.railway.app/"
   ],
   credentials: true
 })); 
