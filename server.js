@@ -250,6 +250,10 @@ app.use('/api/auth', authRoutes);
 const userRoutes = createUserRoutes();
 app.use('/api/user', userRoutes);
 
+// Voting routes (JWT-protected, Redis-based)
+const votingRoutes = createVotingRoutes();
+app.use('/api/proposals', votingRoutes);
+
 // Proposal routes (JWT-protected) 
 const proposalRoutes = createProposalRoutes();
 app.use('/api/proposals', proposalRoutes);
@@ -258,9 +262,7 @@ app.use('/api/proposals', proposalRoutes);
 const categoryRoutes = createCategoryRoutes();
 app.use('/api/categories', categoryRoutes);
 
-// Voting routes (JWT-protected, Redis-based)
-const votingRoutes = createVotingRoutes();
-app.use('/api/proposals', votingRoutes);
+
 
 // ================ GRACEFUL SHUTDOWN ================
 
