@@ -512,6 +512,42 @@ export const categoryDb = {
     }
   },
 
+  // Get categories created by a specific user
+  async getByCreator(createdBy, limit = 50, offset = 0) {
+    try {
+      const { data, error } = await supabase
+        .from('categories')
+        .select(`
+          category_id,
+          title,
+          description,
+          organization_id,
+          created_by,
+          created_at,
+          organizations (
+            organization_name
+          ),
+          users!categories_created_by_fkey (
+            unique_id,
+            first_name,
+            last_name
+          )
+        `)
+        .eq('created_by', createdBy.toLowerCase())
+        .order('created_at', { ascending: false })
+        .range(offset, offset + limit - 1);
+      
+      if (error) {
+        throw error;
+      }
+    
+      return data || [];
+    } catch (error) {
+      console.error('Error getting categories by creator:', error);
+      throw error;
+    }
+  },
+
   // Create new category
   async create(categoryData) {
     try {

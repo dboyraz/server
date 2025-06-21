@@ -136,6 +136,57 @@ export const createCategoryRoutes = () => {
       });
     }
   });
+
+  /**
+  * Get categories created by current user
+  * GET /api/categories/my-categories?limit=50&offset=0
+  * Requires JWT authentication
+  */
+  router.get('/my-categories', requireJwtAuth, async (req, res) => {
+    try {
+      // Get user's organization for validation
+      const user = await userDb.getByWallet(req.walletAddress);
+      if (!user || !user.organization_id) {
+        return res.status(403).json({ 
+          error: 'You must be part of an organization to view categories' 
+        });
+      }
+    
+      const limit = Math.min(parseInt(req.query.limit) || 50, 200); // Max 200
+      const offset = Math.max(parseInt(req.query.offset) || 0, 0);
+    
+      // Get categories created by the current user
+      const categories = await categoryDb.getByCreator(req.walletAddress, limit, offset);
+    
+      // Add follower counts to each category
+      const categoriesWithCounts = await Promise.all(
+        categories.map(async (category) => {
+          const followerCount = await categoryDb.getFollowerCount(category.category_id);
+          const isFollowing = await categoryDb.isFollowing(category.category_id, req.walletAddress);
+          return {
+            ...category,
+            follower_count: followerCount,
+            is_following: isFollowing
+          };
+        })
+      );
+    
+      res.status(200).json({ 
+        categories: categoriesWithCounts,
+        organization_id: user.organization_id,
+        organization_name: user.organizations?.organization_name,
+        limit,
+        offset,
+        count: categoriesWithCounts.length
+      });
+    
+    } catch (error) {
+      console.error('Error getting user categories:', error);
+      res.status(500).json({ 
+        error: 'Failed to get categories' 
+      });
+    }
+  });
   
   /**
    * Create new category
